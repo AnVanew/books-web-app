@@ -8,4 +8,8 @@ public class BookDto extends BaseDto {
     private String annotation;
     private int year;
     private AuthorDto authorDto;
+
+    public String getAuthor(){
+        return authorDto.getName() + " " +authorDto.getSurname();
+    }
 }

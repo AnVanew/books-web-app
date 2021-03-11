@@ -2,9 +2,11 @@ package ru.cbr.study.booksapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.cbr.study.book.dto.BookDto;
 import ru.cbr.study.booksapp.entity.Author;
 import ru.cbr.study.booksapp.entity.Book;
 import ru.cbr.study.booksapp.repository.BookRepository;
+import ru.cbr.study.booksapp.util.Mapper;
 
 import java.util.List;
 
@@ -33,17 +35,5 @@ public class BookService {
     public void deleteBook(Book book){
         bookRepository.delete(book);
     }
-
-    public void updateBook(int bookId, String annotation, String bookName, int year){
-        Book book;
-        book = bookRepository.findById(bookId).get();
-        book.setId(bookId);
-        book.setAnnotation(annotation);
-        book.setBookName(bookName);
-        book.setYear(year);
-        bookRepository.save(book);
-    }
-
-
 
 }

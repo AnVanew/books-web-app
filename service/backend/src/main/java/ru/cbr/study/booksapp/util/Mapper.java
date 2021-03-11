@@ -36,7 +36,7 @@ public class Mapper {
         bookDto.setBookName(book.getBookName());
         bookDto.setYear(book.getYear());
         bookDto.setAnnotation(book.getAnnotation());
-        bookDto.setAuthorDto(toDto(book.getAuthor()));
+        bookDto.setAuthorDto(Mapper.toDto(book.getAuthor()));
         return bookDto;
     }
 

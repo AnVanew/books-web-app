@@ -44,11 +44,9 @@ public class BookController {
     }
 
     @PutMapping(path = "/updateBook")
-    public void updateBook(@RequestHeader int bookId,
-                           @RequestHeader String bookName,
-                           @RequestHeader String annotation,
-                           @RequestHeader int year){
-        bookService.updateBook(bookId, annotation, bookName, year);
+    public void updateBook(@RequestBody BookDto bookDto){
+        Book book = Mapper.toEntity(bookDto);
+        bookService.addBook(book);
     }
 
 }
