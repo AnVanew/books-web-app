@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.4.3</version>
+    </parent>
+
+    <groupId>ru.cbr.study</groupId>
+    <artifactId>book-app-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>BOOKS</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>common</module>
+        <module>service</module>
+    </modules>
+
+    <properties>
+        <common.encoding>UTF-8</common.encoding>
+        <common.source.java.version>1.8</common.source.java.version>
+        <common.target.java.version>1.8</common.target.java.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ru.cbr.study</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
