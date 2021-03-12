@@ -12,8 +12,6 @@ import java.util.List;
 
 public class Mapper {
 
-    private BookRepository bookRepository;
-
     public static AuthorDto toDto(Author author){
         AuthorDto authorDto = new AuthorDto();
         authorDto.setId(author.getId());
@@ -26,7 +24,7 @@ public class Mapper {
         Author author = new Author();
         author.setName(authorDto.getName());
         author.setSurname(authorDto.getSurname());
-        author.setId(authorDto.getId());
+        if(authorDto.getId()!=0)author.setId(authorDto.getId());
         return author;
     }
 
@@ -42,7 +40,7 @@ public class Mapper {
 
     public static Book toEntity(BookDto bookDto){
         Book book = new Book();
-        book.setId(bookDto.getId());
+        if(bookDto.getId()!=0)book.setId(bookDto.getId());
         book.setBookName(bookDto.getBookName());
         book.setAnnotation(bookDto.getAnnotation());
         book.setYear(bookDto.getYear());
@@ -61,7 +59,7 @@ public class Mapper {
 
     public static Comment toEntity(CommentDto commentDto){
         Comment comment = new Comment();
-        comment.setId(commentDto.getId());
+        if(commentDto.getId()!=0)comment.setId(commentDto.getId());
         comment.setComment(commentDto.getComment());
         comment.setUserName(commentDto.getUserName());
         comment.setBook(Mapper.toEntity(commentDto.getBookDto()));

@@ -27,8 +27,8 @@ public class AuthorService {
         authorRepository.save(author);
     }
 
-    public void deleteAuthor(Author author){
-        authorRepository.delete(author);
+    public void deleteAuthor(int id){
+        authorRepository.deleteById(id);
     }
 
 }

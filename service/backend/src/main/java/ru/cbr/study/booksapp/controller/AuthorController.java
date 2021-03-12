@@ -35,10 +35,9 @@ public class AuthorController {
         return authorService.getAllAuthors().stream().map(Mapper::toDto).collect(Collectors.toList());
     }
 
-    @DeleteMapping(path = "/deleteAuthor")
-    public void deleteAuthor(@RequestBody AuthorDto authorDto){
-        Author author = Mapper.toEntity(authorDto);
-        authorService.deleteAuthor(author);
+    @DeleteMapping(path = "/deleteAuthor/{id}")
+    public void deleteAuthor(@PathVariable int id){
+        authorService.deleteAuthor(id);
         log.info("Delete author");
     }
 }

@@ -3,39 +3,73 @@ package ru.cbr.study.booksappfrontend.Route;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import ru.cbr.study.book.dto.AuthorDto;
 import ru.cbr.study.book.dto.BookDto;
-
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 
-
+@Slf4j
 @Route(value = "books", layout = MainLayout.class)
 public class AllBooksView extends AppLayout{
 
-    Class<List<BookDto>> bookDtoListClass = (Class<List<BookDto>>) (Class<?>) List.class;
-
-
     public static final String VIEW_NAME = "Books";
+    Button createBook;
     VerticalLayout layout;
     Grid<BookDto> grid;
 
+    FormLayout authorSearchForm;
+    FormLayout bookNameSearchForm;
+    ComboBox<AuthorDto> select;
+    TextField bookName;
+    Button searchByAuthor;
+    Button searchByName;
+
     public AllBooksView() {
+
+
+
+        RestTemplate restTemplate = new RestTemplate();
+        String fooResourceUrl
+                = "http://localhost:80/authors/allAuthors";
+        ResponseEntity<AuthorDto[]> response
+                = restTemplate.getForEntity(fooResourceUrl, AuthorDto[].class);
+        List<AuthorDto> authors = Arrays.asList(response.getBody());
+        select = new ComboBox<>("Select author");
+        select.setItemLabelGenerator(AuthorDto::getNameAndSurname);
+        select.setItems(authors);
+        searchByAuthor = new Button("Search");
+        authorSearchForm = new FormLayout();
+        authorSearchForm.add(select, searchByAuthor);
+
+        bookName = new TextField("Book name");
+        searchByName = new Button("Search");
+        bookNameSearchForm = new FormLayout();
+        bookNameSearchForm.add(bookName, searchByName);
+
+        createBook = new Button("Create book",  (a)->UI.getCurrent().navigate(BookManage.class,0));
         layout = new VerticalLayout();
         grid = new Grid<>();
-        layout.add(grid);
+        fillGrid();
+        layout.add(bookNameSearchForm, authorSearchForm, createBook, grid);
         setContent(layout);
+        authorSearch();
+        bookSearch();
     }
 
-    @PostConstruct
     public void fillGrid(){
 
         RestTemplate restTemplate = new RestTemplate();
@@ -68,8 +102,8 @@ public class AllBooksView extends AppLayout{
                 dialog.add(cancel);
                 confirm.addClickListener(clickEvent -> {
 
-                    //УДАЛЕНИЕ
-                    //contactRepository.delete(contact);
+                    String entityUrl = "http://localhost:80/books/deleteBook/" + book.getId() ;
+                    restTemplate.delete(entityUrl);
 
                     dialog.close();
                     Notification notification = new Notification("Book is deleted",1000);
@@ -88,6 +122,37 @@ public class AllBooksView extends AppLayout{
                 dialog.open();
             }));
             grid.setItems(bookDtos);
+    }
 
+    public void authorSearch(){
+        searchByAuthor.addClickListener(clickEvent->{
+            String entityUrl = "http://localhost:80/books/authorBooks/" + select.getValue().getId();
+            ResponseEntity<BookDto[]> response
+                    = new RestTemplate().getForEntity(entityUrl, BookDto[].class);
+            List<BookDto> bookDtos = Arrays.asList(response.getBody());
+            grid.setItems(bookDtos);
+            Notification notification = new Notification();
+            notification.addDetachListener(detachEvent -> {
+                UI.getCurrent().navigate(AllBooksView.class);
+            });
+            authorSearchForm.setEnabled(true);
+            notification.open();
+        });
+    }
+
+    public void bookSearch(){
+        searchByName.addClickListener(clickEvent->{
+            String entityUrl = "http://localhost:80/books/namedBooks/" + bookName.getValue();
+            ResponseEntity<BookDto[]> response
+                    = new RestTemplate().getForEntity(entityUrl, BookDto[].class);
+            List<BookDto> bookDtos = Arrays.asList(response.getBody());
+            grid.setItems(bookDtos);
+            Notification notification = new Notification();
+            notification.addDetachListener(detachEvent -> {
+                UI.getCurrent().navigate(AllBooksView.class);
+            });
+            bookNameSearchForm.setEnabled(true);
+            notification.open();
+        });
     }
 }

@@ -27,8 +27,8 @@ public class CommentController {
         commentService.addComment(comment);
     }
 
-    @GetMapping(path = "/bookComments")
-    public List<CommentDto> getAllBookComments(@RequestHeader int bookId){
+    @GetMapping(path = "/bookComments/{bookId}")
+    public List<CommentDto> getAllBookComments(@PathVariable int bookId){
         return commentService.getAllBooksComments(bookId).stream().map(Mapper::toDto).collect(Collectors.toList());
     }
 }

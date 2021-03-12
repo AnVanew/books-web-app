@@ -1,33 +1,28 @@
 package ru.cbr.study.booksappfrontend.Route;
 
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
-import javafx.scene.control.ComboBox;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import ru.cbr.study.book.dto.AuthorDto;
 import ru.cbr.study.book.dto.BookDto;
 import ru.cbr.study.book.dto.CommentDto;
-
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Route(value = "BookPage", layout = MainLayout.class)
 public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
 
@@ -43,20 +38,19 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
     TextField comment;
     Button saveComment;
     private Grid<CommentDto> commentDtoGrid;
+    private BookDto bookDto;
 
     public BookPage(){
-        /////////
-        AuthorDto authorDto = new AuthorDto();
-        authorDto.setName("sdasd");
-        authorDto.setSurname("asdas");
-        authorDto.setId(1);
-        BookDto bookDto = new BookDto();
-        bookDto.setAnnotation("sdasd");
-        bookDto.setBookName("Hello");
-        bookDto.setYear(12);
-        //bookDto.setAuthorDto(authorDto);
-        bookDto.setId(1);
-        /////////
+    }
+
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, Integer bookId) {
+        id = bookId;
+        RestTemplate restTemplate = new RestTemplate();
+        String fooResourceUrl
+                = "http://localhost:80/books/book/" + id ;
+        ResponseEntity<BookDto> responseEntity = restTemplate.getForEntity(fooResourceUrl, BookDto.class);
+        bookDto = responseEntity.getBody();
 
         formLayout = new FormLayout();
         userName = new TextField("User");
@@ -74,31 +68,35 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
         commentDtoGrid = new Grid<>();
         layout.add(bookName, name, surname, annotation, year , formLayout, commentDtoGrid);
         setContent(layout);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, Integer bookId) {
-        id = bookId;
+        fillGrid();
         fillForm();
     }
 
-    @PostConstruct
     public void fillGrid(){
-
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = "http://localhost:80/comments/bookComments";
+                = "http://localhost:80/comments/bookComments/" + id;
         ResponseEntity<CommentDto[]> response
                 = restTemplate.getForEntity(fooResourceUrl, CommentDto[].class);
         List<CommentDto> commentDtos = Arrays.asList(response.getBody());
-        commentDtoGrid.addColumn(CommentDto::getUserName).setHeader("User");
-        commentDtoGrid.addColumn(CommentDto::getComment).setHeader("Comment");
-        commentDtoGrid.setItems(commentDtos);
+        if (!commentDtos.isEmpty()){
+            commentDtoGrid.addColumn(CommentDto::getUserName).setHeader("User");
+            commentDtoGrid.addColumn(CommentDto::getComment).setHeader("Comment");
+            commentDtoGrid.setItems(commentDtos);
+        }
     }
 
     public void fillForm(){
         saveComment.addClickListener(clickEvent->{
-            //Вызов метода добавления коммента
+
+            CommentDto commentDto = new CommentDto();
+            commentDto.setComment(comment.getValue());
+            commentDto.setUserName(userName.getValue());
+            commentDto.setBookDto(bookDto);
+            String fooResourceUrl = "http://localhost:80/comments/addComment";
+            HttpEntity<CommentDto> commentDtoHttpEntity = new HttpEntity<>(commentDto);
+            new RestTemplate().postForEntity(fooResourceUrl, commentDtoHttpEntity, CommentDto.class);
+
             Notification notification = new Notification("New comment",1000);
             notification.setPosition(Notification.Position.MIDDLE);
             notification.addDetachListener(detachEvent -> {

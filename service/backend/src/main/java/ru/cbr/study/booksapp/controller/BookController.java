@@ -1,5 +1,6 @@
 package ru.cbr.study.booksapp.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.cbr.study.book.dto.BookDto;
@@ -10,6 +11,7 @@ import ru.cbr.study.booksapp.util.Mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/books")
 public class BookController {
@@ -26,9 +28,19 @@ public class BookController {
         return bookService.getAllBooks().stream().map(Mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping(path = "/authorBooks")
-    public List<BookDto> getAuthorBooks(@RequestHeader int authorId){
+    @GetMapping(path = "/authorBooks/{authorId}")
+    public List<BookDto> getAuthorBooks(@PathVariable int authorId){
         return bookService.getAuthorsBook(authorId).stream().map(Mapper::toDto).collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/namedBooks/{bookName}")
+    public List<BookDto> getBooksWithSameName(@PathVariable String bookName){
+        return bookService.getBookWithSameName(bookName).stream().map(Mapper::toDto).collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/book/{id}")
+    public BookDto getBook(@PathVariable int id){
+        return Mapper.toDto(bookService.getBookById(id));
     }
 
     @PostMapping(path = "/addBook")
@@ -37,10 +49,9 @@ public class BookController {
         bookService.addBook(book);
     }
 
-    @DeleteMapping(path = "/deleteBook")
-    public void deleteBook(@RequestBody BookDto bookDto){
-        Book book = Mapper.toEntity(bookDto);
-        bookService.deleteBook(book);
+    @DeleteMapping(path = "/deleteBook/{id}")
+    public void deleteBook(@PathVariable int id){
+        bookService.deleteBook(id);
     }
 
     @PutMapping(path = "/updateBook")

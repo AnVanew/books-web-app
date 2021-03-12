@@ -13,10 +13,14 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import ru.cbr.study.book.dto.AuthorDto;
 import ru.cbr.study.book.dto.BookDto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Route("manageBook")
@@ -32,20 +36,12 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
 
 
     public BookManage(){
-///////////
-        AuthorDto authorDto = new AuthorDto();
-        authorDto.setName("sdasd");
-        authorDto.setSurname("asdas");
-        authorDto.setId(1);
-
-        AuthorDto authorDto2 = new AuthorDto();
-        authorDto2.setName("qwe");
-        authorDto2.setSurname("qweqwer");
-        authorDto2.setId(2);
-////////////////
-        List<AuthorDto>  authors = new ArrayList<>();
-        authors.add(authorDto);
-        authors.add(authorDto2);
+        RestTemplate restTemplate = new RestTemplate();
+        String fooResourceUrl
+                = "http://localhost:80/authors/allAuthors";
+        ResponseEntity<AuthorDto[]> response
+                = restTemplate.getForEntity(fooResourceUrl, AuthorDto[].class);
+        List<AuthorDto> authors = Arrays.asList(response.getBody());
 
         select = new ComboBox<>("Select author");
         select.setItemLabelGenerator(AuthorDto::getNameAndSurname);
@@ -77,17 +73,14 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
             BookDto bookDto = new BookDto();
             if(id!=0)bookDto.setId(id);
             bookDto.setBookName(bookName.getValue());
-            //bookDto.setAuthorDto(select.getValue());
+            bookDto.setAuthorDto(select.getValue());
             bookDto.setAnnotation(annotation.getValue());
             bookDto.setYear(year.getValue().intValue());
-            //Вызов метода апдейта книги
-//            contact.setFirstName(firstName.getValue());
-//            contact.setSecondName(secondName.getValue());
-//            contact.setFatherName(fatherName.getValue());
-//            contact.setEmail(email.getValue());
-//            contact.setNumberPhone(numberPhone.getValue());
-//            contactRepository.save(contact);
-            Notification notification = new Notification("Update successful",1000);
+            String entityUrl = "http://localhost:80/books/addBook";
+            HttpEntity<BookDto> bookDtoHttpEntity = new HttpEntity<>(bookDto);
+            new RestTemplate().postForEntity(entityUrl, bookDtoHttpEntity, BookDto.class);
+
+            Notification notification = new Notification("Successful",1000);
             notification.setPosition(Notification.Position.MIDDLE);
             notification.addDetachListener(detachEvent -> {
                 UI.getCurrent().navigate(AllBooksView.class);

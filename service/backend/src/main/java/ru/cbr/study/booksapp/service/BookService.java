@@ -32,8 +32,16 @@ public class BookService {
         bookRepository.save(book);
     }
 
-    public void deleteBook(Book book){
-        bookRepository.delete(book);
+    public void deleteBook(int id){
+        bookRepository.deleteById(id);
+    }
+
+    public Book getBookById(int id){
+        return bookRepository.findById(id).get();
+    }
+
+    public List<Book> getBookWithSameName(String bookName){
+        return (List<Book>) bookRepository.findBooksByBookName(bookName);
     }
 
 }
