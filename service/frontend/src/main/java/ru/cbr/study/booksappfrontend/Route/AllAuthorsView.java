@@ -11,12 +11,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.cbr.study.book.dto.AuthorDto;
+<<<<<<< HEAD
 import static ru.cbr.study.book.references.References.*;
+=======
+import ru.cbr.study.book.dto.BookDto;
+
+>>>>>>> fd063232679caee30acf43846bfa195853c8bc9b
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +34,6 @@ public class AllAuthorsView extends AppLayout {
     TextField name;
     TextField surname;
     Button saveAuthor;
-
-    @Value("${backend.endpoint}")
-    private String backEndEndpoint;
 
     public AllAuthorsView() {
 
@@ -52,7 +53,7 @@ public class AllAuthorsView extends AppLayout {
     public void fillGrid(){
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = backEndEndpoint + AUTHORS_CONT + ALL_AUTHORS_REF;
+                = "http://localhost:80/authors/allAuthors";
         ResponseEntity<AuthorDto[]> response
                 = restTemplate.getForEntity(fooResourceUrl, AuthorDto[].class);
         List<AuthorDto> authorDto = Arrays.asList(response.getBody());
@@ -69,7 +70,7 @@ public class AllAuthorsView extends AppLayout {
             dialog.add(cancel);
             confirm.addClickListener(clickEvent -> {
 
-                String entityUrl = backEndEndpoint + AUTHORS_CONT + DELETE_AUTHOR_REF + "/" + authorDto1.getId() ;
+                String entityUrl = "http://localhost:80/authors/deleteAuthor/" + authorDto1.getId() ;
                 restTemplate.delete(entityUrl);
 
                 dialog.close();
@@ -94,7 +95,8 @@ public class AllAuthorsView extends AppLayout {
 
     public void fillForm(){
         saveAuthor.addClickListener(clickEvent->{
-            String entityUrl = backEndEndpoint + AUTHORS_CONT + ADD_AUTHOR_REF;
+            //Вызов метода добавления автора
+            String entityUrl = "http://localhost:80/authors/addAuthor";
             AuthorDto authorDto = new AuthorDto();
             authorDto.setSurname(surname.getValue());
             authorDto.setName(name.getValue());

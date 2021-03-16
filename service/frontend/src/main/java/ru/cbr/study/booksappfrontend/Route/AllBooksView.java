@@ -13,8 +13,11 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.*;
 import lombok.extern.slf4j.Slf4j;
+<<<<<<< HEAD
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+=======
+>>>>>>> fd063232679caee30acf43846bfa195853c8bc9b
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.cbr.study.book.dto.AuthorDto;
@@ -22,8 +25,6 @@ import ru.cbr.study.book.dto.BookDto;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
-import static ru.cbr.study.book.references.References.*;
-
 
 @Slf4j
 @Route(value = "books", layout = MainLayout.class)
@@ -35,9 +36,6 @@ public class AllBooksView extends AppLayout{
     VerticalLayout layout;
     Grid<BookDto> grid;
 
-    @Value("${backend.endpoint}")
-    private String backEndEndpoint;
-
     FormLayout authorSearchForm;
     FormLayout bookNameSearchForm;
     ComboBox<AuthorDto> select;
@@ -46,13 +44,14 @@ public class AllBooksView extends AppLayout{
     Button searchByName;
 
     public AllBooksView() {
-    }
 
-    @PostConstruct
-    private void paint(){
+
+
         RestTemplate restTemplate = new RestTemplate();
-        String fooResourceUrl = backEndEndpoint + AUTHORS_CONT + ALL_AUTHORS_REF;
-        ResponseEntity<AuthorDto[]> response = restTemplate.getForEntity(fooResourceUrl, AuthorDto[].class);
+        String fooResourceUrl
+                = "http://localhost:80/authors/allAuthors";
+        ResponseEntity<AuthorDto[]> response
+                = restTemplate.getForEntity(fooResourceUrl, AuthorDto[].class);
         List<AuthorDto> authors = Arrays.asList(response.getBody());
         select = new ComboBox<>("Select author");
         select.setItemLabelGenerator(AuthorDto::getNameAndSurname);
@@ -80,7 +79,7 @@ public class AllBooksView extends AppLayout{
 
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = backEndEndpoint + BOOKS_CONT + ALL_BOOKS_REF;
+                = "http://localhost:80/books/allBooks";
         ResponseEntity<BookDto[]> response
                 = restTemplate.getForEntity(fooResourceUrl, BookDto[].class);
 
@@ -108,7 +107,7 @@ public class AllBooksView extends AppLayout{
                 dialog.add(cancel);
                 confirm.addClickListener(clickEvent -> {
 
-                    String entityUrl = backEndEndpoint + BOOKS_CONT + DELETE_BOOK_REF + "/" + book.getId() ;
+                    String entityUrl = "http://localhost:80/books/deleteBook/" + book.getId() ;
                     restTemplate.delete(entityUrl);
 
                     dialog.close();
@@ -132,7 +131,7 @@ public class AllBooksView extends AppLayout{
 
     public void authorSearch(){
         searchByAuthor.addClickListener(clickEvent->{
-            String entityUrl = backEndEndpoint + BOOKS_CONT + AUTHORS_BOOK_REF + "/" + select.getValue().getId();
+            String entityUrl = "http://localhost:80/books/authorBooks/" + select.getValue().getId();
             ResponseEntity<BookDto[]> response
                     = new RestTemplate().getForEntity(entityUrl, BookDto[].class);
             List<BookDto> bookDtos = Arrays.asList(response.getBody());
@@ -148,7 +147,7 @@ public class AllBooksView extends AppLayout{
 
     public void bookSearch(){
         searchByName.addClickListener(clickEvent->{
-            String entityUrl = backEndEndpoint + BOOKS_CONT + NAMED_BOOKS_REF + "/" + bookName.getValue();
+            String entityUrl = "http://localhost:80/books/namedBooks/" + bookName.getValue();
             ResponseEntity<BookDto[]> response
                     = new RestTemplate().getForEntity(entityUrl, BookDto[].class);
             List<BookDto> bookDtos = Arrays.asList(response.getBody());

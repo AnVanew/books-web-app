@@ -12,15 +12,20 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.cbr.study.book.dto.AuthorDto;
 import ru.cbr.study.book.dto.BookDto;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+<<<<<<< HEAD
 import static ru.cbr.study.book.references.References.*;
+=======
+>>>>>>> fd063232679caee30acf43846bfa195853c8bc9b
 
 @Route("manageBook")
 public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
@@ -33,26 +38,11 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
     NumberField year;
     Button saveBook;
 
-    @Value("${backend.endpoint}")
-    private String backEndEndpoint;
-
 
     public BookManage(){
-    }
-
-    @Override
-    public void setParameter(BeforeEvent beforeEvent, Integer bookId) {
-        id = bookId;
-        if (!id.equals(0)){
-            addToNavbar(new H3("Update book"));
-        }
-        else {
-            addToNavbar(new H3("Create book"));
-        }
-
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = backEndEndpoint + AUTHORS_CONT + ALL_AUTHORS_REF;
+                = "http://localhost:80/authors/allAuthors";
         ResponseEntity<AuthorDto[]> response
                 = restTemplate.getForEntity(fooResourceUrl, AuthorDto[].class);
         List<AuthorDto> authors = Arrays.asList(response.getBody());
@@ -68,7 +58,17 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
         saveBook = new Button("Save");
         bookForm.add(bookName, annotation, year, select, saveBook);
         setContent(bookForm);
+    }
 
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, Integer bookId) {
+        id = bookId;
+        if (!id.equals(0)){
+            addToNavbar(new H3("Update book"));
+        }
+        else {
+            addToNavbar(new H3("Create book"));
+        }
         fillForm();
     }
 
@@ -80,7 +80,7 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
             bookDto.setAuthorDto(select.getValue());
             bookDto.setAnnotation(annotation.getValue());
             bookDto.setYear(year.getValue().intValue());
-            String entityUrl = backEndEndpoint + BOOKS_CONT + ADD_BOOK_REF;
+            String entityUrl = "http://localhost:80/books/addBook";
             HttpEntity<BookDto> bookDtoHttpEntity = new HttpEntity<>(bookDto);
             new RestTemplate().postForEntity(entityUrl, bookDtoHttpEntity, BookDto.class);
 
