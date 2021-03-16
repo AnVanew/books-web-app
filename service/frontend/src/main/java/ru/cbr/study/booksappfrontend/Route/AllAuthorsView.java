@@ -20,7 +20,7 @@ import static ru.cbr.study.book.references.References.*;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
-
+//
 @Route(value = "authors", layout = MainLayout.class)
 public class AllAuthorsView extends AppLayout {
     public static final String VIEW_NAME = "Authors";
