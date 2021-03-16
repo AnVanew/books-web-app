@@ -29,6 +29,7 @@ import static ru.cbr.study.book.references.References.*;
 
 @Slf4j
 @Route(value = "books", layout = MainLayout.class)
+@RouteAlias(value = "", layout = MainLayout.class)
 public class AllBooksView extends AppLayout{
 
     public static final String VIEW_NAME = "Books";
