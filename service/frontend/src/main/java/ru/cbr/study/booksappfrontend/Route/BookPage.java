@@ -13,6 +13,7 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,7 @@ import ru.cbr.study.book.dto.CommentDto;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
+import static ru.cbr.study.book.references.References.*;
 
 @Slf4j
 @Route(value = "BookPage", layout = MainLayout.class)
@@ -40,6 +42,9 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
     private Grid<CommentDto> commentDtoGrid;
     private BookDto bookDto;
 
+    @Value("${backend.endpoint}")
+    private String backEndEndpoint;
+
     public BookPage(){
     }
 
@@ -48,7 +53,7 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
         id = bookId;
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = "http://localhost:80/books/book/" + id ;
+                = backEndEndpoint + BOOKS_CONT + BOOK_REF + "/" + id ;
         ResponseEntity<BookDto> responseEntity = restTemplate.getForEntity(fooResourceUrl, BookDto.class);
         bookDto = responseEntity.getBody();
 
@@ -75,7 +80,7 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
     public void fillGrid(){
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = "http://localhost:80/comments/bookComments/" + id;
+                = backEndEndpoint + COMMENTS_CONT + ALL_COMMENTS_REF + "/" + id;
         ResponseEntity<CommentDto[]> response
                 = restTemplate.getForEntity(fooResourceUrl, CommentDto[].class);
         List<CommentDto> commentDtos = Arrays.asList(response.getBody());
@@ -93,7 +98,7 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
             commentDto.setComment(comment.getValue());
             commentDto.setUserName(userName.getValue());
             commentDto.setBookDto(bookDto);
-            String fooResourceUrl = "http://localhost:80/comments/addComment";
+            String fooResourceUrl = backEndEndpoint + COMMENTS_CONT + ADD_COMMENT_REF;
             HttpEntity<CommentDto> commentDtoHttpEntity = new HttpEntity<>(commentDto);
             new RestTemplate().postForEntity(fooResourceUrl, commentDtoHttpEntity, CommentDto.class);
 
