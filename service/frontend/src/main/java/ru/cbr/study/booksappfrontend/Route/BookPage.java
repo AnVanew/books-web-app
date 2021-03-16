@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.cbr.study.book.dto.BookDto;
 import ru.cbr.study.book.dto.CommentDto;
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import static ru.cbr.study.book.references.References.*;

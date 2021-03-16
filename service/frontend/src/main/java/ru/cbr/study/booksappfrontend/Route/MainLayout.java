@@ -22,7 +22,7 @@ public class MainLayout extends AppLayout implements RouterLayout {
 
     public MainLayout() {
 
-        // Header of the menu (the navbar)
+        // Header of the mnu (the navbar)
 
         // menu toggle
         final DrawerToggle drawerToggle = new DrawerToggle();
