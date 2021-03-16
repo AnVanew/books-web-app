@@ -43,13 +43,6 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
     @Override
     public void setParameter(BeforeEvent beforeEvent, Integer bookId) {
         id = bookId;
-        if (!id.equals(0)){
-            addToNavbar(new H3("Update book"));
-        }
-        else {
-            addToNavbar(new H3("Create book"));
-        }
-
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
                 = backEndEndpoint + AUTHORS_CONT + ALL_AUTHORS_REF;
@@ -63,8 +56,24 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
 
         bookForm = new FormLayout();
         bookName = new TextField("Book name");
+        bookName.setValue("BookNa");
         annotation = new TextField("Annotation");
         year = new NumberField("Year");
+
+        if (!id.equals(0)){
+            addToNavbar(new H3("Update book"));
+            String bookUrl = backEndEndpoint + BOOKS_CONT + BOOK_REF + "/" + id ;
+            ResponseEntity<BookDto> responseEntity = restTemplate.getForEntity(bookUrl, BookDto.class);
+            BookDto bookDto = responseEntity.getBody();
+            bookName.setValue(bookDto.getBookName());
+            annotation.setValue(bookDto.getAnnotation());
+            year.setValue((double)bookDto.getYear());
+            select.setValue(bookDto.getAuthorDto());
+        }
+        else {
+            addToNavbar(new H3("Create book"));
+        }
+
         saveBook = new Button("Save");
         bookForm.add(bookName, annotation, year, select, saveBook);
         setContent(bookForm);
