@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.cbr.study.book.dto.AuthorDto;
 import ru.cbr.study.book.dto.BookDto;
+import ru.cbr.study.book.dto.MarksDto;
+
 import java.util.Arrays;
 import java.util.List;
 import static ru.cbr.study.book.references.References.*;
@@ -56,7 +58,6 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
 
         bookForm = new FormLayout();
         bookName = new TextField("Book name");
-        bookName.setValue("BookNa");
         annotation = new TextField("Annotation");
         year = new NumberField("Year");
 
@@ -92,7 +93,6 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
             String entityUrl = backEndEndpoint + BOOKS_CONT + ADD_BOOK_REF;
             HttpEntity<BookDto> bookDtoHttpEntity = new HttpEntity<>(bookDto);
             new RestTemplate().postForEntity(entityUrl, bookDtoHttpEntity, BookDto.class);
-
             Notification notification = new Notification("Successful",1000);
             notification.setPosition(Notification.Position.MIDDLE);
             notification.addDetachListener(detachEvent -> {

@@ -3,9 +3,11 @@ package ru.cbr.study.booksapp.util;
 import ru.cbr.study.book.dto.AuthorDto;
 import ru.cbr.study.book.dto.BookDto;
 import ru.cbr.study.book.dto.CommentDto;
+import ru.cbr.study.book.dto.MarksDto;
 import ru.cbr.study.booksapp.entity.Author;
 import ru.cbr.study.booksapp.entity.Book;
 import ru.cbr.study.booksapp.entity.Comment;
+import ru.cbr.study.booksapp.entity.Marks;
 import ru.cbr.study.booksapp.repository.BookRepository;
 
 import java.util.List;
@@ -64,5 +66,21 @@ public class Mapper {
         comment.setUserName(commentDto.getUserName());
         comment.setBook(Mapper.toEntity(commentDto.getBookDto()));
         return comment;
+    }
+
+    public static Marks toEntity(MarksDto marksDto){
+        Marks marks = new Marks();
+        marks.setBook(Mapper.toEntity(marksDto.getBookDto()));
+        marks.setLikes(marksDto.getLikes());
+        marks.setDislikes(marksDto.getDislikes());
+        return marks;
+    }
+
+    public static MarksDto toDto(Marks marks){
+        MarksDto marksDto = new MarksDto();
+        marksDto.setBookDto(Mapper.toDto(marks.getBook()));
+        marksDto.setLikes(marks.getLikes());
+        marksDto.setDislikes(marks.getDislikes());
+        return marksDto;
     }
 }

@@ -1,5 +1,6 @@
 package ru.cbr.study.booksapp.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/authors")
+@Tag(name="Authors controller", description="Add, get and delete authors")
 public class AuthorController {
 
     private final AuthorService authorService;

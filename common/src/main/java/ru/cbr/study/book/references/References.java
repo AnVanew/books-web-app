@@ -18,4 +18,10 @@ public class References {
     public static String ADD_COMMENT_REF = "/addComment";
     public static String ALL_COMMENTS_REF = "/bookComments";
 
+    public static String LIKE_REF = "/like";
+    public static String DISLIKE_REF = "/dislike";
+    public static String ALL_MARKS_REF = "/getMarks";
+    public static String GET_LIKES_REF = "/getLikes";
+    public static String GET_DISLIKES_REF = "/getDislikes";
+    public static String MARKS_CONT = "/marks";
 }

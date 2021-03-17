@@ -10,7 +10,10 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.BackEndDataProvider;
+import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
@@ -21,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.cbr.study.book.dto.BookDto;
 import ru.cbr.study.book.dto.CommentDto;
+import ru.cbr.study.book.dto.MarksDto;
+
 import java.util.Arrays;
 import java.util.List;
 import static ru.cbr.study.book.references.References.*;
@@ -37,10 +42,11 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
     private Label bookName;
     private Label annotation;
     private Label year;
-    TextField userName;
-    TextField comment;
-    Button saveComment;
+    private TextField userName;
+    private TextField comment;
+    private Button saveComment;
     private Grid<CommentDto> commentDtoGrid;
+    private Grid<MarksDto> marksDtoGrid;
     private BookDto bookDto;
 
     @Value("${backend.endpoint}")
@@ -72,9 +78,11 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
 
         layout = new VerticalLayout();
         commentDtoGrid = new Grid<>();
-        layout.add(bookName, name, surname, annotation, year , formLayout, commentDtoGrid);
+        marksDtoGrid = new Grid<>();
+        layout.add(bookName, name, surname, annotation, year , formLayout, marksDtoGrid, commentDtoGrid);
         setContent(layout);
         fillGrid();
+        fillMarksGrid();
         fillForm();
     }
 
@@ -90,6 +98,23 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
             commentDtoGrid.addColumn(CommentDto::getComment).setHeader("Comment");
             commentDtoGrid.setItems(commentDtos);
         }
+    }
+
+    public void fillMarksGrid(){
+        RestTemplate restTemplate = new RestTemplate();
+        String marksResourceUrl = backEndEndpoint + MARKS_CONT + ALL_MARKS_REF + "/" + id;
+        ResponseEntity<MarksDto> response = restTemplate.getForEntity(marksResourceUrl,MarksDto.class);
+
+            marksDtoGrid.addColumn(MarksDto::getLikes).setHeader("Likes");
+            marksDtoGrid.addColumn(MarksDto::getDislikes).setHeader("Dislikes");
+            marksDtoGrid.addColumn(new NativeButtonRenderer<MarksDto>("Like", clickEvent->{
+                String entityUrl = backEndEndpoint + MARKS_CONT + LIKE_REF + "/" +id; new RestTemplate().put(entityUrl, MarksDto.class);
+                UI.getCurrent().getPage().reload();}));
+            marksDtoGrid.addColumn(new NativeButtonRenderer<MarksDto>("Dislike", clickEvent->{
+                String entityUrl = backEndEndpoint + MARKS_CONT + DISLIKE_REF + "/" +id; new RestTemplate().put(entityUrl, MarksDto.class);
+                UI.getCurrent().getPage().reload();}));
+            marksDtoGrid.setItems(response.getBody());
+
     }
 
     public void fillForm(){
