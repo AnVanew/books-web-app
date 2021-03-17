@@ -42,4 +42,9 @@ public class AuthorController {
         authorService.deleteAuthor(id);
         log.info("Delete author");
     }
+
+    @GetMapping(path = "/author/{id}")
+    public AuthorDto authorDtoById(@PathVariable int id){
+        return Mapper.toDto(authorService.authorById(id));
+    }
 }

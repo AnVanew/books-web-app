@@ -13,6 +13,7 @@ public class References {
     public static String ALL_AUTHORS_REF = "/allAuthors";
     public static String DELETE_AUTHOR_REF = "/deleteAuthor";
     public static String ADD_AUTHOR_REF = "/addAuthor";
+    public static String AUTHOR_BY_ID_REF = "/author";
 
     public static String COMMENTS_CONT = "/comments";
     public static String ADD_COMMENT_REF = "/addComment";

@@ -24,6 +24,9 @@ public class Book extends ru.cbr.study.booksapp.entity.Entity {
     @OneToMany(mappedBy = "book", cascade=CascadeType.ALL)
     private List<Comment> comments;
 
+    @Column(name = "author_id")
+    private int author_id;
+
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;

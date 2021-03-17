@@ -31,4 +31,8 @@ public class AuthorService {
         authorRepository.deleteById(id);
     }
 
+    public Author authorById(int id){
+        return authorRepository.findById(id).get();
+    }
+
 }
