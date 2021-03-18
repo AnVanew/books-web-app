@@ -12,7 +12,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.BackEndDataProvider;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -92,12 +91,7 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
     }
 
     public void fillGrid(){
-        RestTemplate restTemplate = new RestTemplate();
-        String fooResourceUrl
-                = backEndEndpoint + COMMENTS_CONT + ALL_COMMENTS_REF + "/" + id;
-        ResponseEntity<CommentDto[]> response
-                = restTemplate.getForEntity(fooResourceUrl, CommentDto[].class);
-        List<CommentDto> commentDtos = Arrays.asList(response.getBody());
+        List<CommentDto> commentDtos = getFreshComments();
         if (!commentDtos.isEmpty()){
             commentDtoGrid.addColumn(CommentDto::getUserName).setHeader("User");
             commentDtoGrid.addColumn(CommentDto::getComment).setHeader("Comment");
@@ -106,19 +100,16 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
     }
 
     public void fillMarksGrid(){
-        RestTemplate restTemplate = new RestTemplate();
-        String marksResourceUrl = backEndEndpoint + MARKS_CONT + ALL_MARKS_REF + "/" + id;
-        ResponseEntity<MarksDto> response = restTemplate.getForEntity(marksResourceUrl,MarksDto.class);
-
-            marksDtoGrid.addColumn(MarksDto::getLikes).setHeader("Likes");
-            marksDtoGrid.addColumn(MarksDto::getDislikes).setHeader("Dislikes");
-            marksDtoGrid.addColumn(new NativeButtonRenderer<MarksDto>("Like", clickEvent->{
-                String entityUrl = backEndEndpoint + MARKS_CONT + LIKE_REF + "/" +id; new RestTemplate().put(entityUrl, MarksDto.class);
-                UI.getCurrent().getPage().reload();}));
-            marksDtoGrid.addColumn(new NativeButtonRenderer<MarksDto>("Dislike", clickEvent->{
-                String entityUrl = backEndEndpoint + MARKS_CONT + DISLIKE_REF + "/" +id; new RestTemplate().put(entityUrl, MarksDto.class);
-                UI.getCurrent().getPage().reload();}));
-            marksDtoGrid.setItems(response.getBody());
+        MarksDto marksDto = getFreshMarks();
+        marksDtoGrid.addColumn(MarksDto::getLikes).setHeader("Likes");
+        marksDtoGrid.addColumn(MarksDto::getDislikes).setHeader("Dislikes");
+        marksDtoGrid.addColumn(new NativeButtonRenderer<MarksDto>("Like", clickEvent->{
+            String entityUrl = backEndEndpoint + MARKS_CONT + LIKE_REF + "/" +id; new RestTemplate().put(entityUrl, MarksDto.class);
+            marksDtoGrid.setItems(getFreshMarks());}));
+        marksDtoGrid.addColumn(new NativeButtonRenderer<MarksDto>("Dislike", clickEvent->{
+            String entityUrl = backEndEndpoint + MARKS_CONT + DISLIKE_REF + "/" +id; new RestTemplate().put(entityUrl, MarksDto.class);
+            marksDtoGrid.setItems(getFreshMarks());}));
+        marksDtoGrid.setItems(marksDto);
 
     }
 
@@ -136,11 +127,29 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
             Notification notification = new Notification("New comment",1000);
             notification.setPosition(Notification.Position.MIDDLE);
             notification.addDetachListener(detachEvent -> {
-                UI.getCurrent().navigate(AllBooksView.class);
+                userName.clear();
+                comment.clear();
+                formLayout.setEnabled(true);
+                commentDtoGrid.setItems(getFreshComments());
             });
-            formLayout.setEnabled(false);
+
             notification.open();
         });
+    }
+/////////
+    private List<CommentDto> getFreshComments(){
+        String fooResourceUrl
+                = backEndEndpoint + COMMENTS_CONT + ALL_COMMENTS_REF + "/" + id;
+        ResponseEntity<CommentDto[]> response
+                = new RestTemplate().getForEntity(fooResourceUrl, CommentDto[].class);
+        List<CommentDto> commentDtos = Arrays.asList(response.getBody());
+        return commentDtos;
+    }
+
+    private MarksDto getFreshMarks(){
+        String marksResourceUrl = backEndEndpoint + MARKS_CONT + ALL_MARKS_REF + "/" + id;
+        ResponseEntity<MarksDto> response = new RestTemplate().getForEntity(marksResourceUrl,MarksDto.class);
+        return response.getBody();
     }
 
 }
