@@ -8,9 +8,6 @@ import ru.cbr.study.booksapp.entity.Author;
 import ru.cbr.study.booksapp.entity.Book;
 import ru.cbr.study.booksapp.entity.Comment;
 import ru.cbr.study.booksapp.entity.Marks;
-import ru.cbr.study.booksapp.repository.BookRepository;
-
-import java.util.List;
 
 public class Mapper {
 
@@ -46,7 +43,7 @@ public class Mapper {
         book.setBookName(bookDto.getBookName());
         book.setAnnotation(bookDto.getAnnotation());
         book.setYear(bookDto.getYear());
-        book.setAuthor_id(bookDto.getAuthorId());
+        book.setAuthorId(bookDto.getAuthorId());
         return book;
     }
 

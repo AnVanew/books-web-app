@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import ru.cbr.study.book.dto.AuthorDto;
 import ru.cbr.study.book.dto.BookDto;
 import ru.cbr.study.book.dto.CommentDto;
 import ru.cbr.study.book.dto.MarksDto;
@@ -70,10 +71,14 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
         saveComment = new Button("Save");
         formLayout.add(userName, comment, saveComment);
 
+        String AuthorResourceUrl = backEndEndpoint + AUTHORS_CONT + AUTHOR_BY_ID_REF + "/" + bookDto.getAuthorId();
+        ResponseEntity<AuthorDto> response = restTemplate.getForEntity(AuthorResourceUrl, AuthorDto.class);
+        AuthorDto authorDto = response.getBody();
+
         bookName = new Label("Book name : " + bookDto.getBookName());
         annotation = new Label("Annotation : " + bookDto.getAnnotation());
-        name = new Label("Name : " + bookDto.getAuthorDto().getName());
-        surname = new Label("Surname : " + bookDto.getAuthorDto().getSurname());
+        name = new Label("Name : " + authorDto.getName());
+        surname = new Label("Surname : " + authorDto.getSurname());
         year = new Label("Year : " + String.valueOf(bookDto.getYear()));
 
         layout = new VerticalLayout();

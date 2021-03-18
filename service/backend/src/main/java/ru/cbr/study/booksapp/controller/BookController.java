@@ -47,7 +47,9 @@ public class BookController {
 
     @PostMapping(path = "/addBook")
     public void addNewBook(@RequestBody BookDto bookDto){
+        log.info("controller dto"  + bookDto.getAuthorId() );
         Book book = Mapper.toEntity(bookDto);
+        log.info("controller ent"  + book.getAuthorId() );
         bookService.addBook(book);
     }
 

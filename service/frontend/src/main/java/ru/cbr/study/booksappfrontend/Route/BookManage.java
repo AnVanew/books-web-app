@@ -12,6 +12,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import static ru.cbr.study.book.references.References.*;
 
+@Slf4j
 @Route("manageBook")
 public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
 
@@ -69,7 +71,12 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
             bookName.setValue(bookDto.getBookName());
             annotation.setValue(bookDto.getAnnotation());
             year.setValue((double)bookDto.getYear());
-            select.setValue(bookDto.getAuthorDto());
+
+            String AuthorResourceUrl = backEndEndpoint + AUTHORS_CONT + AUTHOR_BY_ID_REF + "/" + bookDto.getAuthorId();
+            ResponseEntity<AuthorDto> response2 = restTemplate.getForEntity(AuthorResourceUrl, AuthorDto.class);
+            AuthorDto authorDto = response2.getBody();
+
+            select.setValue(authorDto);
         }
         else {
             addToNavbar(new H3("Create book"));
@@ -87,7 +94,8 @@ public class BookManage extends AppLayout implements HasUrlParameter<Integer> {
             BookDto bookDto = new BookDto();
             if(id!=0)bookDto.setId(id);
             bookDto.setBookName(bookName.getValue());
-            bookDto.setAuthorDto(select.getValue());
+            bookDto.setAuthorId(select.getValue().getId());
+            log.info("Form  " + bookDto.getAuthorId());
             bookDto.setAnnotation(annotation.getValue());
             bookDto.setYear(year.getValue().intValue());
             String entityUrl = backEndEndpoint + BOOKS_CONT + ADD_BOOK_REF;

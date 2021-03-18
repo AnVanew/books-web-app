@@ -24,11 +24,11 @@ public class Book extends ru.cbr.study.booksapp.entity.Entity {
     @OneToMany(mappedBy = "book", cascade=CascadeType.ALL)
     private List<Comment> comments;
 
-    @Column(name = "author_id")
-    private int author_id;
+    @Column(name = "authorId")
+    private int authorId;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "authorId", insertable=false, updatable=false)
     private Author author;
 
     @OneToOne(mappedBy = "book", cascade=CascadeType.ALL)

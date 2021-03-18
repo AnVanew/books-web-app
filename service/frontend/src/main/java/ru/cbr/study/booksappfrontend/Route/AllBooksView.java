@@ -87,7 +87,12 @@ public class AllBooksView extends AppLayout{
         List<BookDto> bookDtos = Arrays.asList(response.getBody());
 
             grid.addColumn(BookDto::getBookName).setHeader("Book name");
-            grid.addColumn(BookDto::getAuthor).setHeader("Author");
+            grid.addColumn(bookDto->{
+                String AuthorResourceUrl = backEndEndpoint + AUTHORS_CONT + AUTHOR_BY_ID_REF + "/" + bookDto.getAuthorId();
+                ResponseEntity<AuthorDto> resp = new RestTemplate().getForEntity(AuthorResourceUrl, AuthorDto.class);
+                AuthorDto authorDto = resp.getBody();
+                return authorDto.getName() + " " + authorDto.getSurname();
+            }).setHeader("Author");
             grid.addColumn(BookDto::getAnnotation).setHeader("Annotation");
             grid.addColumn(BookDto::getYear).setHeader("Year");
 

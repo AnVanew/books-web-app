@@ -94,20 +94,27 @@ public class AllAuthorsView extends AppLayout {
 
     public void fillForm(){
         saveAuthor.addClickListener(clickEvent->{
-            String entityUrl = backEndEndpoint + AUTHORS_CONT + ADD_AUTHOR_REF;
-            AuthorDto authorDto = new AuthorDto();
-            authorDto.setSurname(surname.getValue());
-            authorDto.setName(name.getValue());
-            HttpEntity<AuthorDto> authorDtoHttpEntity = new HttpEntity<>(authorDto);
-            new RestTemplate().postForEntity(entityUrl, authorDtoHttpEntity, AuthorDto.class);
+            if(surname.getValue().isEmpty() || name.getValue().isEmpty()){
+                Notification notification = new Notification("No data",1000);
+                notification.setPosition(Notification.Position.MIDDLE);
+                notification.open();
+            }
+            else {
+                AuthorDto authorDto = new AuthorDto();
+                authorDto.setSurname(surname.getValue());
+                authorDto.setName(name.getValue());
+                String entityUrl = backEndEndpoint + AUTHORS_CONT + ADD_AUTHOR_REF;
+                HttpEntity<AuthorDto> authorDtoHttpEntity = new HttpEntity<>(authorDto);
+                new RestTemplate().postForEntity(entityUrl, authorDtoHttpEntity, AuthorDto.class);
 
-            Notification notification = new Notification("Save author",1000);
-            notification.setPosition(Notification.Position.MIDDLE);
-            notification.addDetachListener(detachEvent -> {
-                UI.getCurrent().navigate(AllBooksView.class);
-            });
-            formLayout.setEnabled(false);
-            notification.open();
+                Notification notification = new Notification("Save author", 1000);
+                notification.setPosition(Notification.Position.MIDDLE);
+                notification.addDetachListener(detachEvent -> {
+                    UI.getCurrent().navigate(AllBooksView.class);
+                });
+                formLayout.setEnabled(false);
+                notification.open();
+            }
         });
     }
 }
