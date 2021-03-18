@@ -6,5 +6,5 @@ import lombok.Data;
 public class CommentDto extends BaseDto {
     private String userName;
     private String comment;
-    private BookDto bookDto;
+    private int bookId;
 }

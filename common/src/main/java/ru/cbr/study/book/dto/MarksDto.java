@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MarksDto {
 
-    private BookDto bookDto;
+    private int bookId;
     private int likes;
     private int dislikes;
 }

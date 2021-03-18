@@ -128,7 +128,7 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
             CommentDto commentDto = new CommentDto();
             commentDto.setComment(comment.getValue());
             commentDto.setUserName(userName.getValue());
-            commentDto.setBookDto(bookDto);
+            commentDto.setBookId(id);
             String fooResourceUrl = backEndEndpoint + COMMENTS_CONT + ADD_COMMENT_REF;
             HttpEntity<CommentDto> commentDtoHttpEntity = new HttpEntity<>(commentDto);
             new RestTemplate().postForEntity(fooResourceUrl, commentDtoHttpEntity, CommentDto.class);

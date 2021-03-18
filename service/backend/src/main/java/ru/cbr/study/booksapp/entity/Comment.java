@@ -19,8 +19,11 @@ public class Comment extends ru.cbr.study.booksapp.entity.Entity {
     @Column(name = "comment")
     private String comment;
 
+    @Column(name = "book_id")
+    private int bookId;
+
     @ManyToOne
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id", insertable=false, updatable=false)
     private Book book;
 
 }

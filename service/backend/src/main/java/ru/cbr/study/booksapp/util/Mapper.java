@@ -52,7 +52,7 @@ public class Mapper {
         commentDto.setId(comment.getId());
         commentDto.setComment(comment.getComment());
         commentDto.setUserName(comment.getUserName());
-        commentDto.setBookDto(Mapper.toDto(comment.getBook()));
+        commentDto.setBookId(comment.getBook().getId());
         return commentDto;
     }
 
@@ -61,13 +61,13 @@ public class Mapper {
         if(commentDto.getId()!=0)comment.setId(commentDto.getId());
         comment.setComment(commentDto.getComment());
         comment.setUserName(commentDto.getUserName());
-        comment.setBook(Mapper.toEntity(commentDto.getBookDto()));
+        comment.setBookId(commentDto.getBookId());
         return comment;
     }
 
     public static Marks toEntity(MarksDto marksDto){
         Marks marks = new Marks();
-        marks.setBook(Mapper.toEntity(marksDto.getBookDto()));
+        marks.setBook_id(marksDto.getBookId());
         marks.setLikes(marksDto.getLikes());
         marks.setDislikes(marksDto.getDislikes());
         return marks;
@@ -75,7 +75,7 @@ public class Mapper {
 
     public static MarksDto toDto(Marks marks){
         MarksDto marksDto = new MarksDto();
-        marksDto.setBookDto(Mapper.toDto(marks.getBook()));
+        marksDto.setBookId(marks.getBook_id());
         marksDto.setLikes(marks.getLikes());
         marksDto.setDislikes(marks.getDislikes());
         return marksDto;

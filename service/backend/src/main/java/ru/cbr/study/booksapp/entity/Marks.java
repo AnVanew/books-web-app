@@ -24,7 +24,7 @@ public class Marks {
     private int dislikes;
 
     @OneToOne
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id", insertable=false, updatable=false)
     @MapsId
     Book book;
 
