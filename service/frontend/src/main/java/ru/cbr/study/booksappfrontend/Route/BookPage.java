@@ -136,7 +136,7 @@ public class BookPage extends AppLayout implements HasUrlParameter<Integer> {
             notification.open();
         });
     }
-/////////
+
     private List<CommentDto> getFreshComments(){
         String fooResourceUrl
                 = backEndEndpoint + COMMENTS_CONT + ALL_COMMENTS_REF + "/" + id;

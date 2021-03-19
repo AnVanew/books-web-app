@@ -1,5 +1,6 @@
 package ru.cbr.study.booksapp.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +16,11 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
     private final BookRepository bookRepository;
     private final MarksRepository marksRepository;
-
-    @Autowired
-    public BookService(BookRepository bookRepository, MarksRepository marksRepository) {
-        this.bookRepository = bookRepository;
-        this.marksRepository = marksRepository;
-    }
 
     public List<Book> getAllBooks(){
         return (List<Book>) bookRepository.findAll();

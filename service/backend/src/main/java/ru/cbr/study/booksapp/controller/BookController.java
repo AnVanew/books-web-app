@@ -1,12 +1,17 @@
 package ru.cbr.study.booksapp.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.cbr.study.book.dto.BookDto;
 import ru.cbr.study.booksapp.entity.Book;
 import ru.cbr.study.booksapp.service.BookService;
+import ru.cbr.study.booksapp.service.JmsService;
 import ru.cbr.study.booksapp.util.Mapper;
 
 import java.util.List;
@@ -16,14 +21,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/books")
 @Tag(name="Books controller", description="CRUD with books")
+@RequiredArgsConstructor
 public class BookController {
 
     private final BookService bookService;
-
-    @Autowired
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
+    private final JmsService jmsService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping (path = "/allBooks")
     public List<BookDto> getAllBooks(){
@@ -45,12 +48,12 @@ public class BookController {
         return Mapper.toDto(bookService.getBookById(id));
     }
 
+    @Transactional
     @PostMapping(path = "/addBook")
-    public void addNewBook(@RequestBody BookDto bookDto){
-        log.info("controller dto"  + bookDto.getAuthorId() );
+    public void addNewBook(@RequestBody BookDto bookDto) throws JsonProcessingException {
         Book book = Mapper.toEntity(bookDto);
-        log.info("controller ent"  + book.getAuthorId() );
         bookService.addBook(book);
+        jmsService.sendToQueue(bookDto);
     }
 
     @DeleteMapping(path = "/deleteBook/{id}")
